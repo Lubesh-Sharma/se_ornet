@@ -1,28 +1,5 @@
-*.pyc
-**/.history/
-**/.neptune/
-**/log/
-*.txt
-# *.o
-*.egg
-# *.npy
-*.mat
-*.off
-*.ply
-*.pdf
-*.html
-*.zip
-tune_*/*
 **/output/*
 output/*
-**/boost_1_73_0/*
-kernels/dispositions/k_015_center_3D.ply
-.vscode
-.idea
-repreducability/noise_rotate_test/outputs/*
-**/events.out.*
-**/checkpoints/*
-
 !data/docs/*
 data/images/*
 data/datasets/*
