@@ -1,0 +1,20 @@
+Jitting Chamfer 3D
+Global seed set to 42
+WARNING:root:wandb disabled – authentication/setup failed (3 validation errors for Settings
+capture_stdout
+  Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+capture_stderr
+  Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+capture_ipynb
+  Extra inputs are not permitted [type=extra_forbidden, input_value=False, input_type=bool]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden). Continuing with TensorBoard only.
+Loaded JIT 3D CUDA chamfer distance
+dataset:  surreal
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 237, in <module>
+    main_train(model_class_pointer, hparams, parser)
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 152, in main_train
+    tb_logger.experiment = _MultiExperiment(tb_logger.experiment, wandb_run if use_wandb else None)
+AttributeError: can't set attribute 'experiment'

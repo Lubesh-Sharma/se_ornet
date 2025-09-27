@@ -1,0 +1,32 @@
+W0903 19:57:41.817000 17100 site-packages/torch/utils/cpp_extension.py:2425] TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation. 
+W0903 19:57:41.817000 17100 site-packages/torch/utils/cpp_extension.py:2425] If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'] to specific architectures.
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla P100-PCIE-16GB which is of cuda capability 6.0.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.0) - (12.0)
+    
+  warnings.warn(
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/cuda/__init__.py:326: UserWarning: 
+Tesla P100-PCIE-16GB with CUDA capability sm_60 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_70 sm_75 sm_80 sm_86 sm_90 sm_100 sm_120.
+If you want to use the Tesla P100-PCIE-16GB GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+Jitting Chamfer 3D
+Global seed set to 42
+Loaded JIT 3D CUDA chamfer distance
+dataset:  surreal
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 109, in <module>
+    main_train(model_class_pointer, hparams, parser)
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 25, in main_train
+    model = model_class_pointer(hparams)
+  File "/home/du2/22CS30065/SE-ORNet/models/runners/PointCorrWithAngle.py", line 52, in __init__
+    self.ANGLE = hparams.ANGLE.cuda()
+AttributeError: 'Namespace' object has no attribute 'ANGLE'

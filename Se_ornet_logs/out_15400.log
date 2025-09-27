@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 4, in <module>
+    import pytorch_lightning as pl
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/__init__.py", line 20, in <module>
+    from pytorch_lightning.callbacks import Callback  # noqa: E402
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/callbacks/__init__.py", line 26, in <module>
+    from pytorch_lightning.callbacks.pruning import ModelPruning
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/callbacks/pruning.py", line 31, in <module>
+    from pytorch_lightning.core.lightning import LightningModule
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/core/__init__.py", line 15, in <module>
+    from pytorch_lightning.core.datamodule import LightningDataModule
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/core/datamodule.py", line 23, in <module>
+    from pytorch_lightning.core.mixins import HyperparametersMixin
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/core/mixins/__init__.py", line 16, in <module>
+    from pytorch_lightning.core.mixins.hparams_mixin import HyperparametersMixin  # noqa: F401
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/core/mixins/hparams_mixin.py", line 20, in <module>
+    from pytorch_lightning.core.saving import ALLOWED_CONFIG_TYPES, PRIMITIVE_TYPES
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/core/saving.py", line 43, in <module>
+    from omegaconf.errors import UnsupportedValueType, ValidationError
+ImportError: cannot import name 'UnsupportedValueType' from 'omegaconf.errors' (/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/omegaconf/errors.py)

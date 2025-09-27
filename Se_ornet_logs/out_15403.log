@@ -1,0 +1,32 @@
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 4, in <module>
+    import pytorch_lightning as pl
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/__init__.py", line 20, in <module>
+    from pytorch_lightning import metrics  # noqa: E402
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/metrics/__init__.py", line 15, in <module>
+    from pytorch_lightning.metrics.classification import (  # noqa: F401
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/metrics/classification/__init__.py", line 14, in <module>
+    from pytorch_lightning.metrics.classification.accuracy import Accuracy  # noqa: F401
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/metrics/classification/accuracy.py", line 18, in <module>
+    from pytorch_lightning.metrics.utils import deprecated_metrics, void
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/metrics/utils.py", line 29, in <module>
+    from pytorch_lightning.utilities import rank_zero_deprecation
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/__init__.py", line 18, in <module>
+    from pytorch_lightning.utilities.apply_func import move_data_to_device  # noqa: F401
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/apply_func.py", line 27, in <module>
+    from pytorch_lightning.utilities.imports import _compare_version, _TORCHTEXT_AVAILABLE
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/imports.py", line 81, in <module>
+    _HYDRA_EXPERIMENTAL_AVAILABLE = _module_available("hydra.experimental")
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/imports.py", line 37, in _module_available
+    return find_spec(module_path) is not None
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/importlib/util.py", line 94, in find_spec
+    parent = __import__(parent_name, fromlist=['__path__'])
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/hydra/__init__.py", line 2, in <module>
+    from . import utils
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/hydra/utils.py", line 7, in <module>
+    from hydra.plugins.common.utils import HydraConfig
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/hydra/plugins/__init__.py", line 11, in <module>
+    from .completion_plugin import CompletionPlugin
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/hydra/plugins/completion_plugin.py", line 7, in <module>
+    from omegaconf import DictConfig, ListConfig, Config, MissingMandatoryValue
+ImportError: cannot import name 'Config' from 'omegaconf' (/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/omegaconf/__init__.py)

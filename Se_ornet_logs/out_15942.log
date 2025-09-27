@@ -1,0 +1,39 @@
+Jitting Chamfer 3D
+Global seed set to 42
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/device_parser.py:135: LightningDeprecationWarning: Parsing of the Trainer argument gpus='0' (string) will change in the future. In the current version of Lightning, this will select CUDA device with index 0, but from v1.5 it will select gpus [] (same as gpus=0 (int)).
+  rank_zero_deprecation(
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/connectors/accelerator_connector.py:110: LightningDeprecationWarning: `Trainer(distributed_backend=dp)` has been deprecated and will be removed in v1.5. Use `Trainer(accelerator=dp)` instead.
+  rank_zero_deprecation(
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+Loaded JIT 3D CUDA chamfer distance
+dataset:  surreal
+
+Log directory:
+/home/du2/22CS30065/SE-ORNet/output/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_surreal/latent_dim_768/06_09:11:01:31
+
+
+
+
+/home/du2/22CS30065/SE-ORNet/output/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_surreal/latent_dim_768/06_09:11:01:31
+
+
+
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 109, in <module>
+    main_train(model_class_pointer, hparams, parser)
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 84, in main_train
+    model = model.load_from_checkpoint(
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/core/saving.py", line 129, in load_from_checkpoint
+    checkpoint = pl_load(checkpoint_path, map_location=map_location)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/cloud_io.py", line 33, in load
+    return torch.load(f, map_location=map_location)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/serialization.py", line 1529, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint was not an allowed global by default. Please use `torch.serialization.add_safe_globals([pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint])` or the `torch.serialization.safe_globals([pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.

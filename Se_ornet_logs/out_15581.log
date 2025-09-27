@@ -1,0 +1,123 @@
+Jitting Chamfer 3D
+Global seed set to 42
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/device_parser.py:135: LightningDeprecationWarning: Parsing of the Trainer argument gpus='0' (string) will change in the future. In the current version of Lightning, this will select CUDA device with index 0, but from v1.5 it will select gpus [] (same as gpus=0 (int)).
+  rank_zero_deprecation(
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/connectors/accelerator_connector.py:110: LightningDeprecationWarning: `Trainer(distributed_backend=dp)` has been deprecated and will be removed in v1.5. Use `Trainer(accelerator=dp)` instead.
+  rank_zero_deprecation(
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Missing logger folder: /home/du2/22CS30065/SE-ORNet/output/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_surreal/latent_dim_768/04_09:22:26:12
+Set SLURM handle signals.
+
+   | Name                          | Type                  | Params
+-------------------------------------------------------------------------
+0  | train_accuracy                | AccuracyAssumeEye     | 0     
+1  | val_accuracy                  | AccuracyAssumeEye     | 0     
+2  | test_accuracy                 | AccuracyAssumeEye     | 0     
+3  | s_model                       | DGCNN_MODULAR         | 5.8 M 
+4  | t_model                       | DGCNN_MODULAR         | 5.8 M 
+5  | chamfer_dist_3d               | chamfer_3DDist        | 0     
+6  | accuracy_assume_eye           | AccuracyAssumeEye     | 0     
+7  | accuracy_assume_eye_soft_0p01 | AccuracyAssumeEyeSoft | 0     
+8  | accuracy_assume_eye_soft_0p05 | AccuracyAssumeEyeSoft | 0     
+9  | FL_global                     | FocalLoss             | 0     
+10 | src_aug                       | DataAugment           | 0     
+11 | tgt_aug                       | DataAugment           | 0     
+-------------------------------------------------------------------------
+5.8 M     Trainable params
+5.8 M     Non-trainable params
+11.6 M    Total params
+46.576    Total estimated model params size (MB)
+Loaded JIT 3D CUDA chamfer distance
+dataset:  surreal
+
+Log directory:
+/home/du2/22CS30065/SE-ORNet/output/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_surreal/latent_dim_768/04_09:22:26:12
+
+
+
+
+/home/du2/22CS30065/SE-ORNet/output/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_surreal/latent_dim_768/04_09:22:26:12
+
+
+
+Validation sanity check: 0it [00:00, ?it/s]Validation data loader called.
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/data_loading.py:372: UserWarning: Your val_dataloader has `shuffle=True`, it is best practice to turn this off for val/test/predict dataloaders.
+  rank_zero_warn(
+Validation sanity check:   0%|          | 0/2 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 109, in <module>
+    main_train(model_class_pointer, hparams, parser)
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 81, in main_train
+    trainer.fit(model)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 553, in fit
+    self._run(model)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 918, in _run
+    self._dispatch()
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 986, in _dispatch
+    self.accelerator.start_training(self)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/accelerators/accelerator.py", line 92, in start_training
+    self.training_type_plugin.start_training(trainer)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/plugins/training_type/training_type_plugin.py", line 161, in start_training
+    self._results = trainer.run_stage()
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 996, in run_stage
+    return self._run_train()
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1031, in _run_train
+    self._run_sanity_check(self.lightning_module)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1115, in _run_sanity_check
+    self._evaluation_loop.run()
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loops/base.py", line 111, in run
+    self.advance(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 110, in advance
+    dl_outputs = self.epoch_loop.run(
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loops/base.py", line 111, in run
+    self.advance(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 110, in advance
+    output = self.evaluation_step(batch, batch_idx, dataloader_idx)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 154, in evaluation_step
+    output = self.trainer.accelerator.validation_step(step_kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/accelerators/accelerator.py", line 211, in validation_step
+    return self.training_type_plugin.validation_step(*step_kwargs.values())
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/plugins/training_type/dp.py", line 96, in validation_step
+    return self.model(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/parallel/data_parallel.py", line 192, in forward
+    return self.module(*inputs[0], **module_kwargs[0])
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/overrides/data_parallel.py", line 63, in forward
+    output = super().forward(*inputs, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/overrides/base.py", line 93, in forward
+    output = self.module.validation_step(*inputs, **kwargs)
+  File "/home/du2/22CS30065/SE-ORNet/models/shape_corr_trainer.py", line 106, in validation_step
+    return self.training_step(batch, batch_idx, mode=mode)
+  File "/home/du2/22CS30065/SE-ORNet/models/shape_corr_trainer.py", line 65, in training_step
+    batch = self(batch)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/du2/22CS30065/SE-ORNet/models/runners/PointCorrWithAngle.py", line 801, in forward
+    ) = self.forward_source_target(data["source"], data["target"])
+  File "/home/du2/22CS30065/SE-ORNet/models/runners/PointCorrWithAngle.py", line 587, in forward_source_target
+    source, target, loss_angle, loss_discr = self.compute_self_features(
+  File "/home/du2/22CS30065/SE-ORNet/models/runners/PointCorrWithAngle.py", line 202, in compute_self_features
+    return self.surreal_forward(source, target)
+  File "/home/du2/22CS30065/SE-ORNet/models/runners/PointCorrWithAngle.py", line 296, in surreal_forward
+    tgt_pos_student, rotated_gt_0 = self.tgt_aug(target["pos"])
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/du2/22CS30065/SE-ORNet/models/data_augment_utils.py", line 57, in forward
+    batch_data, rotated_gt = rotate_by_z_axis(batch_data)
+  File "/home/du2/22CS30065/SE-ORNet/models/data_augment_utils.py", line 160, in rotate_by_z_axis
+    rotation_angle = ANGLE[rotated_gt]
+RuntimeError: indices should be either on cpu or on the same device as the indexed tensor (cpu)
+                                                              

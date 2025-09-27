@@ -1,0 +1,63 @@
+Jitting Chamfer 3D
+Global seed set to 42
+wandb: W&B API key is configured. Use `wandb login --relogin` to force relogin
+wandb: WARNING Using a boolean value for 'reinit' is deprecated. Use 'return_previous' or 'finish_previous' instead.
+wandb: creating run
+Loaded JIT 3D CUDA chamfer distance
+dataset:  surreal
+wandb: ERROR Error uploading run: returned error 401: {"data":{"upsertBucket":null},"errors":[{"message":"user is not logged in","path":["upsertBucket"],"extensions":{"code":"PERMISSION_ERROR"}}]}
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 223, in <module>
+    main_train(model_class_pointer, hparams, parser)
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 130, in main_train
+    wandb_logger.log_hyperparams(model.hparams)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py", line 48, in wrapped_fn
+    return fn(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/wandb.py", line 210, in log_hyperparams
+    self.experiment.config.update(params, allow_val_change=True)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/base.py", line 42, in experiment
+    return get_experiment() or DummyExperiment()
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py", line 48, in wrapped_fn
+    return fn(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/base.py", line 40, in get_experiment
+    return fn(self)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/wandb.py", line 193, in experiment
+    self._experiment = wandb.init(**self._wandb_init) if wandb.run is None else wandb.run
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/sdk/wandb_init.py", line 1581, in init
+    wandb._sentry.reraise(e)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/analytics/sentry.py", line 162, in reraise
+    raise exc.with_traceback(sys.exc_info()[2])
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/sdk/wandb_init.py", line 1562, in init
+    run = wi.init(run_settings, run_config, run_printer)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/sdk/wandb_init.py", line 1000, in init
+    raise error
+wandb.errors.errors.CommError: Error uploading run: returned error 401: {"data":{"upsertBucket":null},"errors":[{"message":"user is not logged in","path":["upsertBucket"],"extensions":{"code":"PERMISSION_ERROR"}}]}
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 223, in <module>
+    main_train(model_class_pointer, hparams, parser)
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 130, in main_train
+    wandb_logger.log_hyperparams(model.hparams)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py", line 48, in wrapped_fn
+    return fn(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/wandb.py", line 210, in log_hyperparams
+    self.experiment.config.update(params, allow_val_change=True)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/base.py", line 42, in experiment
+    return get_experiment() or DummyExperiment()
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py", line 48, in wrapped_fn
+    return fn(*args, **kwargs)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/base.py", line 40, in get_experiment
+    return fn(self)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/loggers/wandb.py", line 193, in experiment
+    self._experiment = wandb.init(**self._wandb_init) if wandb.run is None else wandb.run
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/sdk/wandb_init.py", line 1581, in init
+    wandb._sentry.reraise(e)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/analytics/sentry.py", line 162, in reraise
+    raise exc.with_traceback(sys.exc_info()[2])
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/sdk/wandb_init.py", line 1562, in init
+    run = wi.init(run_settings, run_config, run_printer)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/wandb/sdk/wandb_init.py", line 1000, in init
+    raise error
+wandb.errors.errors.CommError: Error uploading run: returned error 401: {"data":{"upsertBucket":null},"errors":[{"message":"user is not logged in","path":["upsertBucket"],"extensions":{"code":"PERMISSION_ERROR"}}]}
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mmy_experiment[0m at: [34m[0m
+[1;34mwandb[0m: Find logs at: [1;35moutput/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_surreal/latent_dim_768/05_09:02:23:00/wandb/run-20250905_022301-13qvbpyp/logs[0m
