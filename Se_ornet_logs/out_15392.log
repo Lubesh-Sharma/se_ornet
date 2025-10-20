@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/home/du2/22CS30065/SE-ORNet/train.py", line 100, in <module>
-    model_class_pointer = switch_functions.model_class_pointer(
-  File "/home/du2/22CS30065/SE-ORNet/utils/switch_functions.py", line 26, in model_class_pointer
-    from models.runners.PointCorrWithAngle import PointCorrWithAngle
-  File "/home/du2/22CS30065/SE-ORNet/models/runners/PointCorrWithAngle.py", line 12, in <module>
-    import pointnet2_ops._ext as _ext
-ModuleNotFoundError: No module named 'pointnet2_ops._ext'

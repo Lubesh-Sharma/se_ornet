@@ -52,6 +52,7 @@ def load_dataset(params):
         params (dict): The hyper-parameters
     """
     from data.point_cloud_db.shrec import SHREC
+    from data.point_cloud_db.faust import FAUST
 
     if params.dataset_name in ["shrec"]:
         dataset = SHREC(params,"train")
@@ -76,6 +77,18 @@ def load_dataset(params):
             test_dataset = TOSCA(params,"test")
 
         return train_dataset,val_dataset,test_dataset
+
+    if params.dataset_name in ["faust"]:
+        dataset = FAUST(params, "train")
+        train_size = int(len(dataset) * params.train_val_split)
+        train_dataset, val_dataset = random_split(
+            dataset, [train_size, len(dataset) - train_size]
+        )
+        if params.train_val_split > 0.95:
+            train_size = int(len(dataset) * 0.95)
+            _, val_dataset = random_split(dataset, [train_size, len(dataset) - train_size])
+        test_dataset = FAUST(params, "test")
+        return train_dataset, val_dataset, test_dataset
 
     if params.dataset_name in ["tosca"]:
         dataset = TOSCA(params,"train")

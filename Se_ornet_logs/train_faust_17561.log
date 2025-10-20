@@ -1,0 +1,38 @@
+Jitting Chamfer 3D
+Global seed set to 42
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/utilities/device_parser.py:135: LightningDeprecationWarning: Parsing of the Trainer argument gpus='0' (string) will change in the future. In the current version of Lightning, this will select CUDA device with index 0, but from v1.5 it will select gpus [] (same as gpus=0 (int)).
+  rank_zero_deprecation(
+/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/connectors/accelerator_connector.py:110: LightningDeprecationWarning: `Trainer(distributed_backend=dp)` has been deprecated and will be removed in v1.5. Use `Trainer(accelerator=dp)` instead.
+  rank_zero_deprecation(
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+Loaded JIT 3D CUDA chamfer distance
+dataset:  faust
+
+Log directory:
+/home/du2/22CS30065/SE-ORNet/output/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_faust/latent_dim_768/20_10:05:46:27
+
+
+
+
+/home/du2/22CS30065/SE-ORNet/output/shape_corr/PointCorrWithAngle/arch_PointCorrWithAngle/dataset_name_faust/latent_dim_768/20_10:05:46:27
+
+
+
+Traceback (most recent call last):
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 135, in <module>
+    main_train(model_class_pointer, hparams, parser)
+  File "/home/du2/22CS30065/SE-ORNet/train.py", line 82, in main_train
+    trainer.fit(model)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 553, in fit
+    self._run(model)
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 865, in _run
+    self._call_setup_hook(model)  # allow user to setup lightning_module in accelerator environment
+  File "/home/du2/22CS30065/miniconda3/envs/se_ornet/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1171, in _call_setup_hook
+    model.setup(stage=fn)
+  File "/home/du2/22CS30065/SE-ORNet/models/shape_corr_trainer.py", line 46, in setup
+    ) = switch_functions.load_dataset(self.hparams)
+  File "/home/du2/22CS30065/SE-ORNet/utils/switch_functions.py", line 100, in load_dataset
+    raise Exception("No match for task_name in load_dataset")
+Exception: No match for task_name in load_dataset

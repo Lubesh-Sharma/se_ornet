@@ -3,3 +3,8 @@ output/*
 !data/docs/*
 data/images/*
 data/datasets/*
+**/.vscode/*
+.vscode/*
+.vscode
+**/output_surreal/*
+output_surreal/*
