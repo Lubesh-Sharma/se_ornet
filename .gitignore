@@ -1,5 +1,5 @@
-**/output/*
-output/*
+**/visualization/*
+visualization/*
 !data/docs/*
 data/images/*
 data/datasets/*

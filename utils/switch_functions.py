@@ -1,7 +1,8 @@
 """For all general switch functions based on flags."""
-
+from data.point_cloud_db.faust import FAUST
 from data.point_cloud_db.tosca import TOSCA
 from data.point_cloud_db.smal import SMAL
+from data.point_cloud_db.shrec import SHREC
 from data.point_cloud_db.surreal import surreal
 from torch.utils.data.dataset import random_split
 from torch.utils.data import DataLoader
@@ -51,8 +52,6 @@ def load_dataset(params):
     Args:
         params (dict): The hyper-parameters
     """
-    from data.point_cloud_db.shrec import SHREC
-    from data.point_cloud_db.faust import FAUST
 
     if params.dataset_name in ["shrec"]:
         dataset = SHREC(params,"train")
