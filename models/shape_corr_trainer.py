@@ -338,22 +338,25 @@ class ShapeCorrTemplate(LightningModule):
                 "acc_mean_dist"
             ] /= 3  # TOSCA is not scaled to meters as the other datasets. /3 scales the shapes to be coherent with SMAL (animals as well)
 
-        # Compute geodesic error
-        try:
-            k_neighbors = getattr(hparams, "num_neighs", 40)
-            geodesic_err = compute_geodesic_error(
-                pred_hit, 
-                hit, 
-                input2.squeeze(0), 
-                k_neighbors=k_neighbors,
-                normalize=True
-            )
-            track_dict["geodesic_error"] = geodesic_err.item()
-        except Exception as e:
-            # If geodesic computation fails, log warning but continue
-            import warnings
-            warnings.warn(f"Failed to compute geodesic error: {e}")
-            track_dict["geodesic_error"] = -1.0
+        # Compute geodesic error if enabled
+        if getattr(hparams, "compute_geodesic_error", True):
+            try:
+                k_neighbors = getattr(hparams, "num_neighs", 40)
+                geodesic_err = compute_geodesic_error(
+                    pred_hit, 
+                    hit, 
+                    input2.squeeze(0), 
+                    k_neighbors=k_neighbors,
+                    normalize=True
+                )
+                track_dict["geodesic_error"] = geodesic_err.item()
+            except Exception as e:
+                # If geodesic computation fails, log warning but continue
+                import warnings
+                warnings.warn(f"Failed to compute geodesic error: {e}")
+                track_dict["geodesic_error"] = -1.0
+        else:
+            track_dict["geodesic_error"] = -1.0  # Not computed
 
         acc_000 = ShapeCorrTemplate._label_ACC_percentage_for_inference(
             corr_tensor, label.unsqueeze(0)
