@@ -926,8 +926,20 @@ class PointCorrWithAngle(ShapeCorrTemplate):
 
         source_name = self._resolve_shape_name(self.batch["source"], "source")
         target_name = self._resolve_shape_name(self.batch["target"], "target")
-        source = {"pos": pinput1, "id": self.batch["source"]["id"], "name": source_name}
-        target = {"pos": input2, "id": self.batch["target"]["id"], "name": target_name}
+        source = {
+            "pos": pinput1,
+            "id": self.batch["source"]["id"],
+            "name": source_name,
+            "orig_pos": self.batch["source"].get("orig_pos"),
+            "subsample_idx": self.batch["source"].get("subsample_idx"),
+        }
+        target = {
+            "pos": input2,
+            "id": self.batch["target"]["id"],
+            "name": target_name,
+            "orig_pos": self.batch["target"].get("orig_pos"),
+            "subsample_idx": self.batch["target"].get("subsample_idx"),
+        }
         batch = {"source": source, "target": target}
         batch = self(batch)
         p = batch["P_normalized_teacher"].clone()
