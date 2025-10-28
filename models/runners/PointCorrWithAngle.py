@@ -1134,10 +1134,17 @@ class PointCorrWithAngle(ShapeCorrTemplate):
         if value is None:
             return None
         if isinstance(value, torch.Tensor):
-            return value.detach().cpu().numpy()
+            arr = value.detach().cpu().numpy()
         if isinstance(value, np.ndarray):
-            return value
-        return None
+            arr = value
+        if not isinstance(value, (torch.Tensor, np.ndarray)):
+            return None
+
+        if arr.ndim > 0 and arr.shape[0] == 1:
+            arr = arr.squeeze(axis=0)
+        if arr.ndim > 1 and arr.shape[-1] == 1:
+            arr = arr.squeeze(axis=-1)
+        return arr
 
     def _get_dv_export_paths(self):
         if self._dv_export_paths is not None:
