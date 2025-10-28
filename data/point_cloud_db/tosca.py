@@ -49,6 +49,28 @@ class TOSCA(PointCloudDataset):
 
 
 
+    def build_shape_name_list(self):
+        tosca_path = Path(self.data_root)
+        if not tosca_path.exists():
+            return super().build_shape_name_list()
+        sorted_paths = sorted(
+            [str(path) for path in list(tosca_path.rglob("*.mat"))],
+            key=lambda p: (
+                re.match(r"([a-z]+)([0-9]+)", os.path.basename(p), re.I).groups()[0],
+                int(re.match(r"([a-z]+)([0-9]+)", os.path.basename(p), re.I).groups()[1]),
+            ),
+        )
+        filtered_paths = [
+            file
+            for file in sorted_paths
+            if all(excluded not in file for excluded in ("victoria", "david", "michael"))
+        ]
+        names = [os.path.splitext(os.path.basename(p))[0] for p in filtered_paths]
+        if len(names) < len(self.verts):
+            return super().build_shape_name_list()
+        return names[:len(self.verts)]
+
+
     def __getitem__(self, item):
         out_dict = super(TOSCA, self).__getitem__(item)
         return out_dict

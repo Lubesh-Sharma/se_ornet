@@ -56,6 +56,7 @@ class PointCloudDataset(Dataset):
         self.data_root = f"data/datasets/{params.dataset_name}"
         self.verts,self.faces,self.d_max, self.gt_map = self.load_data(self.data_root, split,self.hparams)
         self.pair_indices = self.valid_pairs(self.gt_map)
+        self.shape_names = self.build_shape_name_list()
 
         # Too big to save
         # self.soft_labels = self.compute_or_load_soft_labels(self.pair_indices,self.verts,self.gt_map,self.data_root)
@@ -79,6 +80,8 @@ class PointCloudDataset(Dataset):
 
         X, Y = {'pos':X_verts},{'pos':Y_verts}
         X["id"], Y["id"] = id1, id2
+        X["name"] = self.shape_names[id1] if id1 < len(self.shape_names) else str(id1)
+        Y["name"] = self.shape_names[id2] if id2 < len(self.shape_names) else str(id2)
 
         X["d_max"], Y["d_max"] = torch.tensor([self.d_max[id1],]).float(), torch.tensor([self.d_max[id2],]).float()
 
@@ -184,7 +187,11 @@ class PointCloudDataset(Dataset):
         return soft_labels
 
 
-
+    def build_shape_name_list(self):
+        prefix = getattr(self.hparams, "dataset_name", "shape")
+        split = getattr(self, "split", "data")
+        total = len(self.verts) if hasattr(self, "verts") else 0
+        return [f"{prefix}_{split}_{idx:04d}" for idx in range(total)]
 
 
 if __name__ == "__main__":

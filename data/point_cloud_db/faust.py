@@ -37,6 +37,12 @@ class FAUST(PointCloudDataset):
         all_pairs = list(itertools.product(list(range(num_shapes)), list(range(num_shapes))))
         return list(filter(lambda pair: pair[0] != pair[1],all_pairs))
 
+    def build_shape_name_list(self):
+        offset = 0
+        if self.split == "test":
+            offset = 80
+        return [f"tr_reg_{offset + idx:03d}" for idx in range(len(self.verts))]
+
     @staticmethod
     def load_data(data_root, split,hparams):
         if(not os.path.exists(f"{data_root}/MPI-FAUST")):

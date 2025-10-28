@@ -6,6 +6,7 @@ from utils.warmup import WarmUpScheduler
 from utils.cyclic_scheduler import CyclicLRWithRestarts
 import numpy as np
 import math
+import os
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import MultiStepLR, StepLR
 from torch_cluster import knn
@@ -21,6 +22,7 @@ from models.modules.dgcnn import DGCNN as non_geo_DGCNN
 from utils.argparse_init import str2bool
 from ChamferDistancePytorch.chamfer3D import dist_chamfer_3D
 from models.data_augment_utils import DataAugment
+import scipy.io as sio
 
 
 class GroupingOperation(torch.autograd.Function):
@@ -88,6 +90,7 @@ class PointCorrWithAngle(ShapeCorrTemplate):
             rotate_nbins=8,
             noise_variance=0.0001,
         )
+        self._dv_export_paths = None
 
     def chamfer_loss(self, pos1, pos2):
         if not pos1.is_cuda:
@@ -921,11 +924,14 @@ class PointCorrWithAngle(ShapeCorrTemplate):
             test_batch
         )
 
-        source = {"pos": pinput1, "id": self.batch["source"]["id"]}
-        target = {"pos": input2, "id": self.batch["target"]["id"]}
+        source_name = self._resolve_shape_name(self.batch["source"], "source")
+        target_name = self._resolve_shape_name(self.batch["target"], "target")
+        source = {"pos": pinput1, "id": self.batch["source"]["id"], "name": source_name}
+        target = {"pos": input2, "id": self.batch["target"]["id"], "name": target_name}
         batch = {"source": source, "target": target}
         batch = self(batch)
         p = batch["P_normalized_teacher"].clone()
+        self._export_dv_outputs(batch)
 
         if self.hparams.use_dualsoftmax_loss:
             temp = 0.0002
@@ -949,6 +955,150 @@ class PointCorrWithAngle(ShapeCorrTemplate):
             self.visualize(batch, mode="test")
 
         return True
+
+    def _export_dv_outputs(self, batch):
+        if not getattr(self.hparams, "save_dv_outputs", True):
+            return
+
+        export_paths = self._get_dv_export_paths()
+        source_entry = batch.get("source", {})
+        target_entry = batch.get("target", {})
+        source_name = self._resolve_shape_name(source_entry, "source")
+        target_name = self._resolve_shape_name(target_entry, "target")
+
+        src_student = source_entry.get("dense_output_features")
+        tgt_student = target_entry.get("dense_output_features")
+        src_teacher = source_entry.get("dense_output_features_teacher")
+        tgt_teacher = target_entry.get("dense_output_features_teacher")
+
+        if src_student is None or tgt_student is None:
+            return
+
+        if src_teacher is None:
+            src_teacher = src_student
+        if tgt_teacher is None:
+            tgt_teacher = tgt_student
+
+        with torch.no_grad():
+            src_teacher_feat = src_teacher.detach().squeeze(0)
+            tgt_teacher_feat = tgt_teacher.detach().squeeze(0)
+            src_teacher_feat = src_teacher_feat.to(
+                dtype=torch.float32, memory_format=torch.contiguous_format
+            )
+            tgt_teacher_feat = tgt_teacher_feat.to(
+                dtype=torch.float32, memory_format=torch.contiguous_format
+            )
+            dist12 = torch.cdist(
+                src_teacher_feat,
+                tgt_teacher_feat,
+                compute_mode="donot_use_mm_for_euclid_dist",
+            )
+            T12 = torch.argmin(dist12, dim=1).cpu().numpy().astype(np.int32) + 1
+            T21 = torch.argmin(dist12, dim=0).cpu().numpy().astype(np.int32) + 1
+
+        np.savetxt(
+            os.path.join(export_paths["T"], f"T_{source_name}_{target_name}.txt"),
+            T12.reshape(-1, 1),
+            fmt="%i",
+        )
+        np.savetxt(
+            os.path.join(export_paths["T"], f"T_{target_name}_{source_name}.txt"),
+            T21.reshape(-1, 1),
+            fmt="%i",
+        )
+
+        src_student_feat = src_student.detach().squeeze(0).cpu().numpy()
+        tgt_student_feat = tgt_student.detach().squeeze(0).cpu().numpy()
+        src_teacher_np = src_teacher_feat.cpu().numpy()
+        tgt_teacher_np = tgt_teacher_feat.cpu().numpy()
+
+        feature_payload_src = {
+            "uphi": src_teacher_np,
+            "uphi_student": src_student_feat,
+        }
+        feature_payload_tgt = {
+            "uphi": tgt_teacher_np,
+            "uphi_student": tgt_student_feat,
+        }
+        feature_payload_src["uphi_teacher"] = src_teacher_np
+        feature_payload_tgt["uphi_teacher"] = tgt_teacher_np
+
+        sio.savemat(
+            os.path.join(export_paths["feature"], f"usefeature_{source_name}.mat"),
+            feature_payload_src,
+        )
+        sio.savemat(
+            os.path.join(export_paths["feature"], f"usefeature_{target_name}.mat"),
+            feature_payload_tgt,
+        )
+
+    def _get_dv_export_paths(self):
+        if self._dv_export_paths is not None:
+            return self._dv_export_paths
+
+        base_dir = getattr(self.hparams, "dv_export_dir", None)
+        if base_dir is None:
+            run_alias = (
+                getattr(self.hparams, "exp_name", None)
+                or getattr(self.hparams, "experiment_name", None)
+                or self.__class__.__name__
+            )
+            dataset = getattr(self.hparams, "dataset_name", "dataset")
+            base_dir = os.path.join(
+                os.getcwd(),
+                "result",
+                f"{run_alias}_{dataset}",
+            )
+
+        paths = {
+            "base": base_dir,
+            "T": os.path.join(base_dir, "T"),
+            "feature": os.path.join(base_dir, "feature"),
+        }
+        os.makedirs(paths["T"], exist_ok=True)
+        os.makedirs(paths["feature"], exist_ok=True)
+        self._dv_export_paths = paths
+        return self._dv_export_paths
+
+    def _resolve_shape_name(self, entry, fallback_prefix):
+        name = entry.get("name") if isinstance(entry, dict) else None
+        if isinstance(name, (list, tuple)):
+            name = name[0] if len(name) > 0 else None
+        if isinstance(name, torch.Tensor):
+            if name.numel() == 1:
+                name = name.item()
+            else:
+                name = name.squeeze().cpu().tolist()
+        if isinstance(name, np.ndarray):
+            if name.size == 1:
+                name = name.item()
+        if name is None:
+            sid = self._resolve_shape_id(entry if isinstance(entry, dict) else {})
+            if isinstance(sid, (int, np.integer)):
+                name = f"{fallback_prefix}_{int(sid)}"
+            else:
+                name = fallback_prefix
+        if isinstance(name, (int, float, np.integer)):
+            name = f"{fallback_prefix}_{int(name)}"
+        safe_name = str(name)
+        safe_name = safe_name.replace("\\", "_").replace("/", "_")
+        safe_name = safe_name.replace(" ", "_")
+        return safe_name
+
+    def _resolve_shape_id(self, entry):
+        sid = entry.get("id") if isinstance(entry, dict) else None
+        if isinstance(sid, torch.Tensor):
+            if sid.numel() == 1:
+                return int(sid.item())
+            sid = sid.squeeze().cpu().numpy()
+        if isinstance(sid, np.ndarray):
+            if sid.size == 1:
+                return int(sid.item())
+        if isinstance(sid, (list, tuple)) and len(sid) > 0:
+            return int(sid[0])
+        if isinstance(sid, (int, float, np.integer)):
+            return int(sid)
+        return None
 
     def visualize(self, batch, mode="train"):
         visualize_pair_corr(self, batch, mode=mode)
@@ -1016,6 +1166,20 @@ class PointCorrWithAngle(ShapeCorrTemplate):
         )
         parser.add_argument(
             "--angle_lambda", type=float, default=1, help="weight for angle loss"
+        )
+        parser.add_argument(
+            "--save_dv_outputs",
+            nargs="?",
+            default=True,
+            type=str2bool,
+            const=True,
+            help="whether to export DV-Matcher style T/features during test",
+        )
+        parser.add_argument(
+            "--dv_export_dir",
+            type=str,
+            default=None,
+            help="custom directory for DV-style outputs",
         )
 
         parser.add_argument(

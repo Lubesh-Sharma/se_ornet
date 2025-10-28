@@ -52,6 +52,19 @@ class SHREC(PointCloudDataset):
             pairs = list(itertools.product(list(range(len(self.verts))), list(range(len(self.verts)))))
             return list(filter(lambda pair: pair[0] != pair[1],pairs))
     
+    def build_shape_name_list(self):
+        shapes_path = Path(self.data_root) / "off_2"
+        if not shapes_path.exists():
+            return super().build_shape_name_list()
+        sorted_paths = sorted(
+            [path for path in shapes_path.rglob("*.off")],
+            key=lambda p: int(p.stem),
+        )
+        names = [path.stem for path in sorted_paths]
+        if len(names) < len(self.verts):
+            return super().build_shape_name_list()
+        return names[:len(self.verts)]
+
     def __getitem__(self, item):
         out_dict = super(SHREC, self).__getitem__(item)
         return out_dict
