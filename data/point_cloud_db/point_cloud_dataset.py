@@ -74,6 +74,9 @@ class PointCloudDataset(Dataset):
         X_verts = to_numpy(self.verts[id1])
         Y_verts = to_numpy(self.verts[id2])
 
+        X_idx = np.arange(X_verts.shape[0], dtype=np.int64)
+        Y_idx = np.arange(Y_verts.shape[0], dtype=np.int64)
+
         if(isinstance(self,TOSCA)):
             X_verts = X_verts / 100
             Y_verts = Y_verts / 100
@@ -82,6 +85,10 @@ class PointCloudDataset(Dataset):
         X["id"], Y["id"] = id1, id2
         X["name"] = self.shape_names[id1] if id1 < len(self.shape_names) else str(id1)
         Y["name"] = self.shape_names[id2] if id2 < len(self.shape_names) else str(id2)
+        X["orig_pos"] = X_verts.astype(np.float32, copy=False)
+        Y["orig_pos"] = Y_verts.astype(np.float32, copy=False)
+        X_verts = X["orig_pos"]
+        Y_verts = Y["orig_pos"]
 
         X["d_max"], Y["d_max"] = torch.tensor([self.d_max[id1],]).float(), torch.tensor([self.d_max[id2],]).float()
 
@@ -89,9 +96,12 @@ class PointCloudDataset(Dataset):
         gt_map = torch.arange(X['pos'].shape[0])
         
         if min_num_points > self.hparams.num_points:
-            Y["rand_choice"] = X["rand_choice"] = np.random.choice(min_num_points, self.hparams.num_points, replace=False) 
-            X["pos"] = X_verts[X["rand_choice"]]
-            Y["pos"] = Y_verts[X["rand_choice"]]
+            selection = np.random.choice(min_num_points, self.hparams.num_points, replace=False)
+            Y["rand_choice"] = X["rand_choice"] = selection
+            X["pos"] = X_verts[selection]
+            Y["pos"] = Y_verts[selection]
+            X_idx = X_idx[selection]
+            Y_idx = Y_idx[selection]
 
             if(self.gt_map is None):
                 pass
@@ -100,16 +110,30 @@ class PointCloudDataset(Dataset):
             elif(pair_str in self.gt_map and self.gt_map[pair_str] is not None and isinstance(self.gt_map,dict)):
                 gt_map = self.gt_map[pair_str][Y["rand_choice"]]
                 Y["pos"] = Y_verts[gt_map]
-                Y["rand_choice"] = np.random.choice(self.hparams.num_points, self.hparams.num_points, replace=False) 
-                Y["pos"] = Y["pos"][Y["rand_choice"]]
-                gt_map = np.argsort(Y["rand_choice"])
+                Y_idx = gt_map
+                perm = np.random.choice(self.hparams.num_points, self.hparams.num_points, replace=False)
+                Y["rand_choice"] = perm
+                Y["pos"] = Y["pos"][perm]
+                Y_idx = Y_idx[perm]
+                gt_map = np.argsort(perm)
             else:
                 gt_map = np.arange(Y_verts.shape[0])
+        else:
+            X["rand_choice"] = X_idx.copy()
+            Y["rand_choice"] = Y_idx.copy()
+
+        X["subsample_idx"] = X_idx
+        Y["subsample_idx"] = Y_idx
 
         for pc in [X,Y]:
             for k,v in pc.items():
-                if(isinstance(v,np.ndarray)):
-                    pc[k] = torch.from_numpy(v.astype('float32'))
+                if isinstance(v, np.ndarray):
+                    if k in ("rand_choice", "subsample_idx"):
+                        pc[k] = torch.from_numpy(v.astype(np.int64))
+                    elif k == "orig_pos":
+                        pc[k] = torch.from_numpy(v.astype(np.float32))
+                    else:
+                        pc[k] = torch.from_numpy(v.astype(np.float32))
 
             pc["edge_index"] = knn(pc["pos"], pc["pos"], k=self.hparams.num_neighs,num_workers=20)
             pc["neigh_idxs"] = pc["edge_index"][1].reshape(pc["pos"].shape[0], -1)

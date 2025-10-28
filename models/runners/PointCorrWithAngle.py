@@ -993,24 +993,32 @@ class PointCorrWithAngle(ShapeCorrTemplate):
                 tgt_teacher_feat,
                 compute_mode="donot_use_mm_for_euclid_dist",
             )
-            T12 = torch.argmin(dist12, dim=1).cpu().numpy().astype(np.int32) + 1
-            T21 = torch.argmin(dist12, dim=0).cpu().numpy().astype(np.int32) + 1
+            T12 = torch.argmin(dist12, dim=1).cpu().numpy().astype(np.int64)
+            T21 = torch.argmin(dist12, dim=0).cpu().numpy().astype(np.int64)
+
+        T12_full = self._expand_correspondence(T12, source_entry, target_entry)
+        T21_full = self._expand_correspondence(T21, target_entry, source_entry)
 
         np.savetxt(
             os.path.join(export_paths["T"], f"T_{source_name}_{target_name}.txt"),
-            T12.reshape(-1, 1),
+            (T12_full + 1).reshape(-1, 1),
             fmt="%i",
         )
         np.savetxt(
             os.path.join(export_paths["T"], f"T_{target_name}_{source_name}.txt"),
-            T21.reshape(-1, 1),
+            (T21_full + 1).reshape(-1, 1),
             fmt="%i",
         )
 
-        src_student_feat = src_student.detach().squeeze(0).cpu().numpy()
-        tgt_student_feat = tgt_student.detach().squeeze(0).cpu().numpy()
-        src_teacher_np = src_teacher_feat.cpu().numpy()
-        tgt_teacher_np = tgt_teacher_feat.cpu().numpy()
+        src_student_subset = src_student.detach().squeeze(0).cpu().numpy()
+        tgt_student_subset = tgt_student.detach().squeeze(0).cpu().numpy()
+        src_teacher_subset = src_teacher_feat.cpu().numpy()
+        tgt_teacher_subset = tgt_teacher_feat.cpu().numpy()
+
+        src_teacher_np = self._expand_features(src_teacher_subset, source_entry)
+        tgt_teacher_np = self._expand_features(tgt_teacher_subset, target_entry)
+        src_student_feat = self._expand_features(src_student_subset, source_entry)
+        tgt_student_feat = self._expand_features(tgt_student_subset, target_entry)
 
         feature_payload_src = {
             "uphi": src_teacher_np,
@@ -1031,6 +1039,93 @@ class PointCorrWithAngle(ShapeCorrTemplate):
             os.path.join(export_paths["feature"], f"usefeature_{target_name}.mat"),
             feature_payload_tgt,
         )
+
+    def _expand_correspondence(self, subset_corr, src_entry, tgt_entry):
+        subset_corr = np.asarray(subset_corr, dtype=np.int64)
+        src_idx = self._tensor_to_numpy(src_entry.get("subsample_idx"))
+        tgt_idx = self._tensor_to_numpy(tgt_entry.get("subsample_idx"))
+        src_full_pos = self._tensor_to_numpy(src_entry.get("orig_pos"))
+        if src_idx is None or tgt_idx is None or src_full_pos is None:
+            return subset_corr
+
+        src_idx = src_idx.astype(np.int64)
+        tgt_idx = tgt_idx.astype(np.int64)
+        if subset_corr.shape[0] != src_idx.shape[0]:
+            min_len = min(subset_corr.shape[0], src_idx.shape[0])
+            subset_corr = subset_corr[:min_len]
+            src_idx = src_idx[:min_len]
+
+        num_src_full = src_full_pos.shape[0]
+        full_corr = np.empty(num_src_full, dtype=np.int64)
+        full_corr.fill(-1)
+
+        subset_corr_clipped = np.clip(subset_corr, 0, max(len(tgt_idx) - 1, 0))
+        mapped_targets = tgt_idx[subset_corr_clipped]
+        if mapped_targets.size == 0:
+            return np.zeros(num_src_full, dtype=np.int64)
+        full_corr[src_idx] = mapped_targets
+
+        missing_src = np.setdiff1d(
+            np.arange(num_src_full, dtype=np.int64),
+            src_idx,
+            assume_unique=True,
+        )
+        if missing_src.size > 0 and src_idx.size > 0:
+            subset_pos = src_full_pos[src_idx]
+            missing_pos = src_full_pos[missing_src]
+            diff = missing_pos[:, None, :] - subset_pos[None, :, :]
+            dist = np.sum(diff * diff, axis=2)
+            nn = np.argmin(dist, axis=1)
+            full_corr[missing_src] = mapped_targets[nn]
+
+        # For any remaining -1 (can happen if tgt subset empty), fall back to nearest valid target or zero
+        if (full_corr < 0).any():
+            fallback = mapped_targets[0] if mapped_targets.size > 0 else 0
+            full_corr[full_corr < 0] = fallback
+
+        return full_corr
+
+    def _expand_features(self, subset_feats, entry):
+        subset_feats = np.asarray(subset_feats)
+        full_pos = self._tensor_to_numpy(entry.get("orig_pos"))
+        subset_idx = self._tensor_to_numpy(entry.get("subsample_idx"))
+        if full_pos is None or subset_idx is None:
+            return subset_feats
+
+        if subset_feats.ndim != 2 or subset_feats.size == 0:
+            return subset_feats
+
+        subset_idx = subset_idx.astype(np.int64)
+        num_full = full_pos.shape[0]
+        if subset_feats.shape[0] == num_full:
+            return subset_feats
+
+        full_array = np.zeros((num_full, subset_feats.shape[1]), dtype=subset_feats.dtype)
+        valid_len = min(subset_feats.shape[0], subset_idx.shape[0])
+        full_array[subset_idx[:valid_len]] = subset_feats[:valid_len]
+
+        missing = np.setdiff1d(
+            np.arange(num_full, dtype=np.int64),
+            subset_idx[:valid_len],
+            assume_unique=True,
+        )
+        if missing.size > 0 and valid_len > 0:
+            subset_pos = full_pos[subset_idx[:valid_len]]
+            missing_pos = full_pos[missing]
+            diff = missing_pos[:, None, :] - subset_pos[None, :, :]
+            dist = np.sum(diff * diff, axis=2)
+            nn = np.argmin(dist, axis=1)
+            full_array[missing] = subset_feats[nn]
+        return full_array
+
+    def _tensor_to_numpy(self, value):
+        if value is None:
+            return None
+        if isinstance(value, torch.Tensor):
+            return value.detach().cpu().numpy()
+        if isinstance(value, np.ndarray):
+            return value
+        return None
 
     def _get_dv_export_paths(self):
         if self._dv_export_paths is not None:
