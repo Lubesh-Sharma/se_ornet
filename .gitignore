@@ -8,3 +8,7 @@ data/datasets/*
 .vscode
 **/output_surreal/*
 output_surreal/*
+**/__pycache__/
+__pycache__/
+*.pyc
+*.pyo

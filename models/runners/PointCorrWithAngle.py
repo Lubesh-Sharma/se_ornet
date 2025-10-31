@@ -1530,6 +1530,15 @@ class PointCorrWithAngle(ShapeCorrTemplate):
             help="whether to use dual softmax loss",
         )
 
+        parser.add_argument(
+            "--compute_geodesic_error",
+            nargs="?",
+            default=True,
+            type=str2bool,
+            const=True,
+            help="whether to compute geodesic error during testing (may be computationally expensive)",
+        )
+
         parser.set_defaults(
             optimizer="adam",
             lr=0.0003,
